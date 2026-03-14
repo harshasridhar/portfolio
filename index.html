@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-H9NJDMDFE2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-H9NJDMDFE2');
+</script>
+<title>MS Harsha — Engineer, Explorer, AI Enthusiast</title>
+<meta name="description" content="Portfolio of Harsha Sridhar — Senior Engineer building scalable systems, exploring agentic AI, and thinking in code and cosmos.">
+<meta name="author" content="Harsha Sridhar">
+<link rel="canonical" href="https://msharsha.com/">
+<meta property="og:title" content="MS Harsha — Engineer, Explorer, AI Enthusiast">
+<meta property="og:description" content="Senior Engineer building scalable systems, exploring agentic AI, and thinking in code and cosmos.">
+<meta property="og:url" content="https://msharsha.com/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="MS Harsha — Engineer, Explorer, AI Enthusiast">
+<meta name="twitter:description" content="Senior Engineer building scalable systems, exploring agentic AI, and thinking in code and cosmos.">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a href="mailto:noreply@msharsha.com" style="position:absolute;left:-9999px;opacity:0;height:0;width:0;overflow:hidden" tabindex="-1" aria-hidden="true">Contact</a>
+
+<!-- ═══ BACKGROUND LAYERS ═══ -->
+<div id="nebula"></div>
+<canvas id="starfield"></canvas>
+<canvas id="galaxyCanvas"></canvas>
+
+<!-- ═══ CUSTOM CURSOR ═══ -->
+<div id="cur">
+  <div class="cur-dot"></div>
+  <div class="cur-ring"></div>
+  <div class="cur-pulse"></div>
+  <span class="cur-hint">that's you</span>
+</div>
+<canvas id="curTrail"></canvas>
+
+<!-- ═══ FLOATING PILL NAV (desktop/tablet) ═══ -->
+<div class="pill-nav" id="pillNav">
+  <button class="pill-dot active" data-section="hero"><span class="pill-label">Hero</span></button>
+  <button class="pill-dot" data-section="origin"><span class="pill-label">Origin</span></button>
+  <button class="pill-dot" data-section="career"><span class="pill-label">Career</span></button>
+  <button class="pill-dot" data-section="stack"><span class="pill-label">Stack</span></button>
+  <button class="pill-dot" data-section="places"><span class="pill-label">Places</span></button>
+  <button class="pill-dot" data-section="cosmos"><span class="pill-label">Cosmos</span></button>
+  <button class="pill-dot" data-section="contact"><span class="pill-label">Say Hi</span></button>
+</div>
+
+<!-- ═══ MOBILE NAV ═══ -->
+<div class="mob-nav" id="mobNav">
+  <a href="#" class="mob-logo">H<em>S</em></a>
+  <button class="ham" id="ham"><span></span><span></span><span></span></button>
+</div>
+<div class="drw" id="drw">
+  <a href="#hero">Home</a>
+  <a href="#origin">Origin</a>
+  <a href="#career">Career</a>
+  <a href="#stack">Stack</a>
+  <a href="#places">Places</a>
+  <a href="#cosmos">Thinking</a>
+  <a href="#contact">Say Hi</a>
+</div>
+
+<!-- ═══════════ CHAPTER 0 — HERO ═══════════ -->
+<section id="hero">
+  <canvas id="heroParticles"></canvas>
+  <p class="h-eye">Bengaluru, India · Senior Engineer · Agentic AI Explorer</p>
+  <h1 class="h-name">
+    <span class="ln"><span class="i">MS Harsha</span></span>
+  </h1>
+  <div class="h-tag">
+    <span>I build systems that scale</span>
+    <span class="sp">·</span>
+    <span>I think in code and cosmos</span>
+    <span class="sp">·</span>
+    <span>I explore what's next</span>
+  </div>
+  <div class="scue" id="scue"><div class="scl"></div><span>scroll</span></div>
+</section>
+
+<!-- ═══════════ STRIP 1 ═══════════ -->
+<div class="ss"><div class="si fu">Not just an engineer who codes — <em>a systems thinker</em> obsessed with what software becomes when it starts <span class="tl">acting on its own.</span></div></div>
+
+<!-- ═══════════ CHAPTER 1 — ORIGIN ═══════════ -->
+<section class="chapter" id="origin">
+  <p class="chl fu">Chapter one</p>
+  <h2 class="sec-h">
+    <span class="lr fu d1"><span class="in">Who I am</span></span>
+    <span class="lr fu d2"><span class="in">when I'm not</span></span>
+    <span class="lr fu d3"><span class="in">shipping code.</span></span>
+  </h2>
+  <div class="og">
+    <div>
+      <p class="os fu d2" data-parallax="slow">I write code the same way I think — <em>in systems.</em><br><br>But I've also spent too many nights staring at the sky, wondering if the universe is just a really well-architected <span class="al">distributed system</span> with no documentation.<br><br>That curiosity — about scale, emergence, and things that <span class="tl">shouldn't be possible but are</span> — is what drives me both at work and outside of it.</p>
+      <p class="oc fu d3">MTech in Data Science from BITS Pilani. Currently at Roku building e-commerce infrastructure and chasing agentic AI. Pursuing an MBA in AI for Business on the side. Always reading. Occasionally travelling. Perpetually curious.</p>
+    </div>
+    <div class="fu d3">
+      <div class="curr">
+        <div class="cr"><span class="ck">Currently</span><span class="ca">→</span><span class="cv">Roku, Bengaluru</span></div>
+        <div class="cr"><span class="ck">Studying</span><span class="ca">→</span><span class="cv">MBA · AI for Business</span></div>
+        <div class="cr"><span class="ck">Exploring</span><span class="ca">→</span><span class="cv">Agentic AI systems</span></div>
+        <div class="cr"><span class="ck">Education</span><span class="ca">→</span><span class="cv">MTech Data Science, BITS Pilani</span></div>
+        <div class="cr"><span class="ck">Certified</span><span class="ca">→</span><span class="cv" style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap">AWS Solutions Architect <span class="ap">☁ Associate</span></span></div>
+        <div class="cr"><span class="ck">Core stack</span><span class="ca">→</span><span class="cv">Java · Python · Spring Boot · Kafka · Flink</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ STRIP 2 ═══════════ -->
+<div class="ss"><div class="si fu">Six years. Four companies. One trajectory — <span class="al">always moving toward</span> harder problems and <em>bigger questions.</em></div></div>
+
+<!-- ═══════════ CHAPTER 2 — CAREER ═══════════ -->
+<section class="chapter" id="career">
+  <p class="chl fu">Chapter two</p>
+  <h2 class="sec-h fu d1">The arc.</h2>
+  <p class="ci fu d2">I started as an intern writing APIs at a fast-paced startup and grew into someone who designs the systems those APIs live inside. <strong>Each move was deliberate.</strong> Always toward more complexity, more ownership, and more interesting problems.</p>
+
+  <!-- Horizontal timeline with glow sweep -->
+  <div class="tl-h" id="tlH">
+    <div class="tl-line">
+      <div class="tl-glow" id="tlGlow"></div>
+    </div>
+    <div class="tl-items">
+      <div class="tl-item" id="tli0">
+        <div class="tl-node"></div>
+        <div class="mem-card accent-d">
+          <div class="mc-period">Jan 2019 → Dec 2021</div>
+          <div class="mc-company">GigSky · Bangalore</div>
+          <div class="mc-title">Where it all started.</div>
+          <p class="mc-body">Intern to Senior Engineer, all at one place. APIs, legacy migration, multithreaded performance work — <strong>the full foundation.</strong></p>
+          <div class="mc-tags"><span class="mc-tag">API Development</span><span class="mc-tag">Streaming Migration</span><span class="mc-tag">SQL Optimisation</span><span class="mc-tag">Multithreading</span></div>
+        </div>
+      </div>
+      <div class="tl-item" id="tli1">
+        <div class="tl-node"></div>
+        <div class="mem-card accent-t">
+          <div class="mc-period">Dec 2021 → Feb 2023</div>
+          <div class="mc-company">Amagi Corporation · Bangalore</div>
+          <div class="mc-title">Streaming data at scale.</div>
+          <p class="mc-body">Data engineering at a cloud broadcast platform. Kafka, Flink, and real-time pipelines became <strong>a lens</strong> for every large-scale system problem.</p>
+          <div class="mc-tags"><span class="mc-tag">Apache Kafka</span><span class="mc-tag">Apache Flink</span><span class="mc-tag">Data Engineering</span><span class="mc-tag">Streaming</span></div>
+        </div>
+      </div>
+      <div class="tl-item" id="tli2">
+        <div class="tl-node"></div>
+        <div class="mem-card accent-d">
+          <div class="mc-period">Feb 2023 → Nov 2023</div>
+          <div class="mc-company">i2Scale Technologies · Bengaluru</div>
+          <div class="mc-title">Backend engineering at scale.</div>
+          <p class="mc-body">Microservices architecture, system design, and fast iteration — <strong>a year's worth of instincts in ten months.</strong></p>
+          <div class="mc-tags"><span class="mc-tag">Microservices</span><span class="mc-tag">System Design</span><span class="mc-tag">Java</span></div>
+        </div>
+      </div>
+      <div class="tl-item" id="tli3">
+        <div class="tl-node"></div>
+        <div class="mem-card accent-p">
+          <div class="mc-period">Nov 2023 → Present</div>
+          <div class="mc-company">Roku Inc. · Bengaluru</div>
+          <div class="mc-title">Leading e-commerce, exploring what's next.</div>
+          <p class="mc-body">End-to-end ownership of the e-commerce platform. Spring Boot, Spring Reactive, React — and asking what parts can <strong>start making decisions on their own.</strong></p>
+          <div class="mc-tags"><span class="mc-tag">Spring Boot</span><span class="mc-tag">Spring Reactive</span><span class="mc-tag">React</span><span class="mc-tag">Agentic AI</span><span class="mc-tag">System Design</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ CHAPTER 3 — STACK ═══════════ -->
+<section class="chapter" id="stack">
+  <p class="chl fu">Chapter three</p>
+  <h2 class="sec-h fu d1">What I reach for.</h2>
+  <p class="si2 fu d2">Tools aren't the story — they're how the story gets told. These are the ones I've learned to <strong>trust under pressure.</strong></p>
+
+  <!-- Desktop: constellation canvas -->
+  <div class="constellation-wrap fu d3" id="constellationWrap">
+    <canvas id="constellation"></canvas>
+  </div>
+  <div class="constellation-legends fu d4">
+    <div class="constellation-legend"><div class="legend-dot lp"></div>Backend Core</div>
+    <div class="constellation-legend"><div class="legend-dot lt"></div>Data &amp; Streaming</div>
+    <div class="constellation-legend"><div class="legend-dot la"></div>AI / ML Layer</div>
+  </div>
+
+  <!-- Mobile fallback: zone pills -->
+  <div class="zones">
+    <div class="zone zp fu d2"><div class="zl">Backend Core</div><div class="pills" data-zone>
+      <div class="pill"><span class="pn">Java</span><span class="pt">daily</span></div>
+      <div class="pill"><span class="pn">Python</span><span class="pt">daily</span></div>
+      <div class="pill"><span class="pn">Spring Boot</span><span class="pt">fluent</span></div>
+      <div class="pill"><span class="pn">Spring Reactive</span><span class="pt">fluent</span></div>
+      <div class="pill"><span class="pn">Hibernate</span><span class="pt">fluent</span></div>
+      <div class="pill"><span class="pn">Microservices</span><span class="pt">fluent</span></div>
+      <div class="pill"><span class="pn">REST APIs</span><span class="pt">daily</span></div>
+      <div class="pill"><span class="pn">React</span><span class="pt">working</span></div>
+    </div></div>
+    <div class="zone zt fu d3"><div class="zl">Data &amp; Streaming</div><div class="pills" data-zone>
+      <div class="pill"><span class="pn">Apache Kafka</span><span class="pt">fluent</span></div>
+      <div class="pill"><span class="pn">Apache Flink</span><span class="pt">fluent</span></div>
+      <div class="pill"><span class="pn">SQL</span><span class="pt">daily</span></div>
+      <div class="pill"><span class="pn">Docker</span><span class="pt">daily</span></div>
+      <div class="pill"><span class="pn">Kubernetes</span><span class="pt">working</span></div>
+      <div class="pill"><span class="pn">Apache Pulsar</span><span class="pt">certified</span></div>
+      <div class="pill"><span class="pn">Git</span><span class="pt">daily</span></div>
+    </div></div>
+    <div class="zone za fu d4"><div class="zl">AI / ML Layer</div><div class="pills" data-zone>
+      <div class="pill"><span class="pn">Machine Learning</span><span class="pt">fluent</span></div>
+      <div class="pill"><span class="pn">NLP</span><span class="pt">fluent</span></div>
+      <div class="pill"><span class="pn">Gen AI</span><span class="pt">exploring</span></div>
+      <div class="pill"><span class="pn">Agentic Systems</span><span class="pt">exploring</span></div>
+      <div class="pill"><span class="pn">Data Science</span><span class="pt">fluent</span></div>
+    </div></div>
+  </div>
+</section>
+
+<!-- ═══════════ STRIP 3 ═══════════ -->
+<div class="ss"><div class="si fu"><span class="tl">Between the deployments</span> and the deep work, there's a person who needs to <em>get out and go somewhere.</em></div></div>
+
+<!-- ═══════════ CHAPTER 4 — PLACES ═══════════ -->
+<!-- TRAVEL PHOTOS: Using images from /images/ folder -->
+<section class="chapter wide" id="places">
+  <div class="places-top">
+    <div class="places-text">
+      <p class="chl fu">Chapter four</p>
+      <h2 class="sec-h fu d1">Places.</h2>
+      <p class="pi2 fu d2">Travel is how I reset. Every place has left <em>a different kind of residue</em> — a way of thinking, a perspective impossible to get from a screen.</p>
+    </div>
+    <div class="places-featured">
+      <div class="tc" data-tilt>
+        <img src="images/Mumbai.jpg" alt="Mumbai">
+        <div class="tov"></div>
+        <div class="tmeta"><div class="tcn">Mumbai</div><div class="tcap">City of dreams.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="photo-grid">
+    <div class="tc" data-tilt>
+      <img src="images/SriLanka.jpg" alt="Sri Lanka">
+      <div class="tov"></div>
+      <div class="tmeta"><div class="tcn tcn-sm">Sri Lanka</div><div class="tcap">Tea hills and ocean.</div></div>
+    </div>
+    <div class="tc" data-tilt>
+      <img src="images/Bengaluru.jpg" alt="Bengaluru">
+      <div class="tov"></div>
+      <div class="tmeta"><div class="tcn tcn-sm">Bengaluru</div><div class="tcap">Where it all started.</div></div>
+    </div>
+    <div class="tc" data-tilt>
+      <img src="images/Chicago.jpg" alt="Chicago">
+      <div class="tov"></div>
+      <div class="tmeta"><div class="tcn tcn-sm">Chicago</div><div class="tcap">The Windy City.</div></div>
+    </div>
+    <div class="tc tc-dubai" data-tilt>
+      <img src="images/Dubai.jpg" alt="Dubai">
+      <div class="tov"></div>
+      <div class="tmeta"><div class="tcn">Dubai</div><div class="tcap">A skyline from the future.</div></div>
+    </div>
+    <div class="tc" data-tilt>
+      <img src="images/GoldenGateSF.jpg" alt="Golden Gate">
+      <div class="tov"></div>
+      <div class="tmeta"><div class="tcn tcn-sm">San Francisco</div><div class="tcap">The bridge and beyond.</div></div>
+    </div>
+    <div class="tc" data-tilt>
+      <img src="images/Yosemite.jpg" alt="Yosemite">
+      <div class="tov"></div>
+      <div class="tmeta"><div class="tcn tcn-sm">Yosemite</div><div class="tcap">Nature at scale.</div></div>
+    </div>
+    <div class="tc" data-tilt>
+      <img src="images/Maldives.jpg" alt="Maldives">
+      <div class="tov"></div>
+      <div class="tmeta"><div class="tcn tcn-sm">Maldives</div><div class="tcap">Yes, it's as good as it looks.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ STRIP 4 ═══════════ -->
+<div class="ss"><div class="si fu">And then there's the part that has nothing to do with work — <em>we are literally made of stardust.</em> The iron in your blood was forged in the heart of a dying star. <span class="al">That's not poetry, that's physics.</span></div></div>
+
+<!-- ═══════════ CHAPTER 5 — COSMOS ═══════════ -->
+<section class="chapter cosmos-section" id="cosmos">
+  <canvas id="orrery" class="orrery-canvas"></canvas>
+  <div class="cosmos-content">
+    <p class="chl fu">Chapter five</p>
+    <h2 class="sec-h fu d1">What keeps me<br>up at night.</h2>
+    <div class="csp">
+      <div>
+        <div class="cbq fu d2">Astrophysics taught me that <em>scale is relative</em> and the universe doesn't care about your <span class="tl">SLA.</span></div>
+        <p class="cb fu d3">I've been fascinated by astrophysics for as long as I've been interested in computers. There's something deeply satisfying about systems that work at cosmological scale — <strong>no central authority, no single point of failure,</strong> just physics doing its thing across billions of light years.</p>
+        <p class="cb fu d4">I think that's secretly why distributed systems appeal to me. And why agentic AI feels like the next frontier worth chasing — it's the question of how you build something that <strong>acts intelligently without being told exactly what to do.</strong> Turns out the universe figured that one out a long time ago.</p>
+      </div>
+      <div class="fu d3">
+        <div class="wg">
+          <a class="wc" href="https://medium.com/@msharsha/rethinking-software-development-how-ai-driven-development-life-cycle-ai-dlc-is-going-to-1f6a315f94c8" target="_blank" rel="noopener"><div class="wcat">AI &amp; Engineering</div><div class="wtit">Rethinking Software Development: How AI Driven Development Life Cycle (AI-DLC) is Going to Transform the Way We Build Software</div><span class="cs">Read on Medium →</span></a>
+          <a class="wc" href="https://medium.com/@msharsha/why-developers-are-ditching-browser-tabs-forever-thanks-to-ai-546a09180832" target="_blank" rel="noopener"><div class="wcat">Developer Experience</div><div class="wtit">Why Developers Are Ditching Browser Tabs Forever (Thanks to AI)</div><span class="cs">Read on Medium →</span></a>
+          <a class="wc" href="https://medium.com/@msharsha/when-a-database-connection-problem-brought-down-half-the-internet-the-aws-us-east-1-outage-6a951c6b04b3" target="_blank" rel="noopener"><div class="wcat">Systems &amp; Postmortems</div><div class="wtit">When a Database Connection Problem Brought Down Half the Internet: The AWS US-EAST-1 Outage Postmortem</div><span class="cs">Read on Medium →</span></a>
+          <a class="wc" href="https://medium.com/@msharsha/why-ai-interfaces-are-moving-beyond-text-and-what-comes-next-8e779cfdc1ca" target="_blank" rel="noopener"><div class="wcat">AI &amp; Interfaces</div><div class="wtit">Why AI Interfaces Are Moving Beyond Text — And What Comes Next</div><span class="cs">Read on Medium →</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ CHAPTER 6 — CONTACT ═══════════ -->
+<hr class="dv">
+<div class="contact-wrap" id="contact">
+  <div class="contact-grid">
+    <div class="contact-left">
+      <p class="chl fu">Chapter six</p>
+      <h2 class="cbig fu d1">Say<br><span>hi.</span></h2>
+      <p class="csub fu d2">I'm always up for a good conversation — about systems, AI, astrophysics, or anything that shouldn't exist yet but will.</p>
+      <div class="clinks fu d3">
+        <a class="clink" id="eml" href="#">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>Email me
+        </a>
+        <a class="clink" href="https://www.linkedin.com/in/harshasridhar" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>LinkedIn
+        </a>
+      </div>
+    </div>
+    <div class="contact-right fu d2">
+      <p class="galaxy-story">Software, astrophysics, evolution, history — when these worlds collide, the debris eventually settles into something new.</p>
+      <p class="galaxy-story-sub">That's what you've been watching in the background. Two galaxies — my interests — spiralling into each other, scattering stars, and slowly forming one.</p>
+      <p class="galaxy-story-sub"><em>That's me.</em></p>
+    </div>
+  </div>
+</div>
+<hr class="dv">
+<footer><span class="fc">© 2026 Harsha Sridhar</span><span class="fi">All photographs are copyrighted and may not be used without permission.</span><span class="fw">Built by Harsha. <span>No frameworks were harmed.</span></span></footer>
+
+<!-- ═══ SCRIPTS ═══ -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
