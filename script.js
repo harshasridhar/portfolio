@@ -305,55 +305,64 @@
     });
   });
 
-  // ── GA4 SCROLL DEPTH PER CHAPTER ──
+  // ── GA4 ENGAGEMENT EVENTS (analysis-ready, deduplicated) ──
+  // Custom params (section_name, percent_scrolled, article_title, link_url, link_domain,
+  // seconds) are sent in snake_case so they can be registered as GA4 custom dimensions.
   if (typeof gtag === 'function') {
-    const chapterNames = { hero: 'Hero', origin: 'Ch1 Origin', career: 'Ch2 Career', stack: 'Ch3 Stack', places: 'Ch4 Places', cosmos: 'Ch5 Cosmos', contact: 'Ch6 Contact' };
+    const sectionLabels = { hero: 'Hero', origin: 'Origin', career: 'Career', stack: 'Stack', places: 'Places', cosmos: 'Cosmos', contact: 'Contact' };
+
+    // 1. Section views — one event per section, with which section + how far through.
     const seen = new Set();
-    const depthObs = new IntersectionObserver(entries => {
+    const sViewObs = new IntersectionObserver(entries => {
       entries.forEach(e => {
-        if (!e.isIntersecting) return;
-        const id = e.target.id;
-        if (seen.has(id)) return;
-        seen.add(id);
-        gtag('event', 'scroll_depth', { event_category: 'engagement', event_label: chapterNames[id] || id, value: seen.size });
+        if (!e.isIntersecting || seen.has(e.target.id)) return;
+        seen.add(e.target.id);
+        gtag('event', 'section_view', {
+          section_name: sectionLabels[e.target.id] || e.target.id,
+          sections_seen: seen.size
+        });
       });
-    }, { threshold: 0.3 });
-    sectionIds.forEach(id => { const el = document.getElementById(id); if (el) depthObs.observe(el); });
+    }, { threshold: 0.4 });
+    sectionIds.forEach(id => { const el = document.getElementById(id); if (el) sViewObs.observe(el); });
 
-    // ── GA4 CONTACT CLICKS ──
+    // 2. Scroll depth — GA4-standard 25/50/75/100% milestones.
+    const depthHit = new Set();
+    window.addEventListener('scroll', () => {
+      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+      const pct = scrollable > 0 ? Math.round((window.scrollY / scrollable) * 100) : 0;
+      [25, 50, 75, 100].forEach(m => {
+        if (pct >= m && !depthHit.has(m)) { depthHit.add(m); gtag('event', 'scroll', { percent_scrolled: m }); }
+      });
+    }, { passive: true });
+
+    // 3. Email click — mark as a Key Event (conversion) in GA4 → Admin → Events.
     const emlLink = document.getElementById('eml');
-    if (emlLink) emlLink.addEventListener('click', () => {
-      gtag('event', 'contact_click', { event_category: 'conversion', event_label: 'email' });
-    });
-    document.querySelectorAll('.clink[href*="linkedin"]').forEach(el => {
-      el.addEventListener('click', () => {
-        gtag('event', 'contact_click', { event_category: 'conversion', event_label: 'linkedin' });
-      });
-    });
+    if (emlLink) emlLink.addEventListener('click', () => gtag('event', 'email_click', { link_id: 'contact_email' }));
 
-    // ── GA4 ARTICLE CLICKS ──
-    document.querySelectorAll('.wc[href]').forEach(el => {
-      el.addEventListener('click', () => {
-        const title = el.querySelector('.wtit');
-        gtag('event', 'article_click', { event_category: 'engagement', event_label: title ? title.textContent.slice(0, 80) : el.href });
-      });
-    });
+    // 4. LinkedIn click — also a good Key Event candidate.
+    document.querySelectorAll('a[href*="linkedin"]').forEach(el =>
+      el.addEventListener('click', () => gtag('event', 'linkedin_click', { link_url: el.href })));
 
-    // ── GA4 OUTBOUND LINK CLICKS ──
+    // 5. Medium article clicks — capture which article.
+    document.querySelectorAll('.wc[href]').forEach(el =>
+      el.addEventListener('click', () => {
+        const t = el.querySelector('.wtit');
+        gtag('event', 'article_click', { article_title: t ? t.textContent.trim().slice(0, 100) : el.href, link_url: el.href });
+      }));
+
+    // 6. Generic outbound clicks — EXCLUDES LinkedIn + Medium so they aren't double counted.
     document.querySelectorAll('a[target="_blank"]').forEach(el => {
+      if (el.closest('.wc') || /linkedin/i.test(el.href)) return;
       el.addEventListener('click', () => {
-        gtag('event', 'outbound_click', { event_category: 'engagement', event_label: el.href });
+        let host = ''; try { host = new URL(el.href).hostname; } catch (_) {}
+        gtag('event', 'outbound_click', { link_url: el.href, link_domain: host });
       });
     });
 
-    // ── GA4 TIME ENGAGED MILESTONES ──
-    [30, 60, 90, 180].forEach(sec => {
-      setTimeout(() => {
-        if (document.visibilityState === 'visible') {
-          gtag('event', 'time_on_page', { event_category: 'engagement', event_label: sec + 's', value: sec });
-        }
-      }, sec * 1000);
-    });
+    // 7. Engaged-time milestones — only fire if the tab was actually visible.
+    [30, 60, 120, 300].forEach(sec => setTimeout(() => {
+      if (document.visibilityState === 'visible') gtag('event', 'engaged_time', { seconds: sec });
+    }, sec * 1000));
   }
 
   // ── 5. MOBILE DRAWER ──

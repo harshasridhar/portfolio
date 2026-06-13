@@ -123,7 +123,7 @@ body{background:var(--bg);color:var(--w);font-family:var(--fb);font-size:17px;li
 .h-eye{font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--a);font-family:var(--fd);margin-bottom:1.5rem;opacity:0}
 .h-name{font-family:var(--fd);font-size:clamp(36px,7vw,120px);font-weight:800;line-height:.88;letter-spacing:-.048em;margin-bottom:2.5rem;position:relative;z-index:3;white-space:nowrap}
 .h-name .ln{display:block}
-.h-name .ln .i{display:block;opacity:0}
+.h-name .ln .i{display:block;opacity:1}
 .h-tag{display:flex;align-items:center;justify-content:center;gap:1.2rem;font-size:clamp(14px,1.6vw,18px);color:var(--m);font-weight:300;opacity:0;flex-wrap:wrap}
 .h-tag .sp{color:var(--d)}
 
@@ -239,6 +239,7 @@ body{background:var(--bg);color:var(--w);font-family:var(--fb);font-size:17px;li
 .tc-dubai{grid-column:4;grid-row:1/3}
 
 .tc{position:relative;overflow:hidden;border-radius:16px;cursor:none;transition:transform .6s ease-out;transform-style:preserve-3d}
+.tc picture{display:block;width:100%;height:100%}
 .tc img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s ease-out;transform-origin:center}
 .tov{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.88) 0%,rgba(0,0,0,.25) 50%,rgba(0,0,0,.08) 100%);transition:opacity .5s}
 .tc:hover .tov{opacity:.6}
@@ -372,4 +373,21 @@ footer{padding:1.75rem 3rem;display:flex;align-items:center;justify-content:spac
 
   .ss{padding:2rem 1.25rem}
   footer{padding:1.5rem 1.25rem;flex-direction:column;gap:.4rem;text-align:center}
+
+  /* Mobile: tame heavy decorative background canvases for battery/perf */
+  #galaxyCanvas{opacity:.55}
+}
+
+/* ═══════════════════════════════════════════════════
+   ACCESSIBILITY — REDUCED MOTION
+   Honors the OS "reduce motion" setting: kill decorative
+   canvas/loops, and make sure all content is visible even
+   if JS reveal animations never run.
+   ═══════════════════════════════════════════════════ */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+  #starfield,#galaxyCanvas,#heroParticles,#curTrail,#nebula,.orrery-canvas,#constellation{display:none!important}
+  .fu,.tc{opacity:1!important;transform:none!important}
+  .lr .in{transform:none!important}
+  .h-name .ln .i,.h-eye,.h-tag,.mem-card,.pill{opacity:1!important;transform:none!important;filter:none!important}
 }
