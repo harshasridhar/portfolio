@@ -322,7 +322,7 @@
           sections_seen: seen.size
         });
       });
-    }, { threshold: 0.4 });
+    }, { threshold: 0, rootMargin: '-35% 0px -35% 0px' }); // fires when a section crosses the viewport's middle band — reliable for any section height
     sectionIds.forEach(id => { const el = document.getElementById(id); if (el) sViewObs.observe(el); });
 
     // 2. Scroll depth — GA4-standard 25/50/75/100% milestones.
@@ -331,7 +331,7 @@
       const scrollable = document.documentElement.scrollHeight - window.innerHeight;
       const pct = scrollable > 0 ? Math.round((window.scrollY / scrollable) * 100) : 0;
       [25, 50, 75, 100].forEach(m => {
-        if (pct >= m && !depthHit.has(m)) { depthHit.add(m); gtag('event', 'scroll', { percent_scrolled: m }); }
+        if (pct >= m && !depthHit.has(m)) { depthHit.add(m); gtag('event', 'scroll_depth', { percent_scrolled: m }); } // 'scroll_depth' avoids collision with GA4's built-in 'scroll' auto-event
       });
     }, { passive: true });
 
