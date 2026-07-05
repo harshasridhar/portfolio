@@ -77,9 +77,16 @@
     requestAnimationFrame(tick);
   })();
 
-  document.querySelectorAll('a,button,.tc,.wc,.pill,.cr,.mem-card,.pill-dot').forEach(el => {
+  document.querySelectorAll('a,button,.tc,.wc,.cr,.mem-card,.pill-dot,.sig-card,.lab-canvas-wrap').forEach(el => {
     el.addEventListener('mouseenter', () => cur.classList.add('big'));
     el.addEventListener('mouseleave', () => cur.classList.remove('big'));
+  });
+  // Delegate for elements created after DOMContentLoaded (chips in reader, mobile system lists).
+  document.addEventListener('mouseover', e => {
+    if (e.target.closest('.lr-chip, .sys-list li')) cur.classList.add('big');
+  });
+  document.addEventListener('mouseout', e => {
+    if (e.target.closest('.lr-chip, .sys-list li')) cur.classList.remove('big');
   });
 
   // ── 3. SCROLL REVEAL OBSERVER (must run first to ensure content is visible) ──
@@ -87,9 +94,6 @@
     entries.forEach(e => {
       if (!e.isIntersecting) return;
       e.target.classList.add('go');
-      e.target.querySelectorAll('.pill').forEach((p, i) =>
-        setTimeout(() => p.classList.add('go'), i * 55)
-      );
     });
   }, { threshold: 0.08 });
   document.querySelectorAll('.fu,.tc').forEach(el => revealObs.observe(el));
@@ -825,226 +829,360 @@
     obs.observe(tlH);
   })(); } catch(e) { console.warn('Timeline error:', e); }
 
-  // ── 8. SKILL CONSTELLATION ──
+  // ── 8. STACK — ORBITAL SYSTEMS + READER + MOBILE CARDS ──
   try { (function () {
-    const wrap = document.getElementById('constellationWrap');
-    const canvas = document.getElementById('constellation');
-    if (!wrap || !canvas) return;
+    // Single source of truth: three "systems" (problem domains), each with a small
+    // fleet of tools ordered by how central they are (index 0 = closest orbit).
+    // We render this into (a) a canvas orrery on desktop and (b) system cards on mobile.
+    const systems = [
+      {
+        key: 'p', label: 'Services I ship',
+        blurb: 'Backend I build against — mostly JVM, always tested under load.',
+        color: [139, 131, 232],
+        tools: [
+          { name: 'Java',            level: 'daily',     note: 'The language I think in. Seven years of muscle memory across services, streams, and batch jobs.' },
+          { name: 'Spring Boot',     level: 'daily',     note: 'Default choice for shipping fast without giving up rigor. Config, security, observability — sorted.' },
+          { name: 'Spring Reactive', level: 'daily',     note: 'Non-blocking end-to-end at Roku. Backpressure and reactive streams as first-class citizens.' },
+          { name: 'REST APIs',       level: 'daily',     note: 'Contract-first. Versioned, documented, and stress-tested — the boring parts done right.' },
+          { name: 'Python',          level: 'daily',     note: 'The utility knife — scripts, data cleaning, ML notebooks, and the occasional prototype.' },
+          { name: 'Hibernate',       level: 'fluent',    note: 'JPA when it fits, hand-tuned SQL when it doesn\'t. I\'ve seen enough N+1s to have opinions.' },
+          { name: 'Microservices',   level: 'fluent',    note: 'Service boundaries as a design discipline — split when the domain earns it, not before.' },
+          { name: 'React',           level: 'working',   note: 'Comfortable end-to-end for the checkout surfaces I own. Not my primary craft, still shipping to prod.' }
+        ]
+      },
+      {
+        key: 't', label: 'Data I move',
+        blurb: 'Pipelines, streams, and the plumbing that keeps them honest.',
+        color: [31, 173, 128],
+        tools: [
+          { name: 'Apache Kafka',    level: 'daily',     note: 'Every large-scale system I\'ve built has Kafka in it. Two years at Amagi turned it into a design instinct.' },
+          { name: 'SQL',             level: 'daily',     note: 'Query plans, indexes, and knowing when to stop optimizing. Postgres and MySQL are old friends.' },
+          { name: 'Docker',          level: 'daily',     note: 'Reproducible everything. If it runs on my machine, it runs on yours — because the machine is a file.' },
+          { name: 'Git',             level: 'daily',     note: 'History as documentation. Branch discipline as a team superpower.' },
+          { name: 'Apache Flink',    level: 'fluent',    note: 'Where I got serious about stateful stream processing — event-time semantics, exactly-once, the works.' },
+          { name: 'Kubernetes',      level: 'working',   note: 'Enough to debug pods, read manifests, and stay out of the platform team\'s way.' },
+          { name: 'Apache Pulsar',   level: 'certified', note: 'Certified. Sometimes the right answer when Kafka isn\'t — geo-replication and tiered storage out of the box.' }
+        ]
+      },
+      {
+        key: 'a', label: 'Systems I teach to think',
+        blurb: 'The frontier I keep circling back to — from ML foundations to agentic frontiers.',
+        color: [240, 168, 48],
+        tools: [
+          { name: 'Machine Learning', level: 'fluent',    note: 'MTech in Data Science means I actually understand what the model is doing, not just what it outputs.' },
+          { name: 'NLP',              level: 'fluent',    note: 'From classical pipelines to transformers — the discipline that made me care about language as data.' },
+          { name: 'Data Science',     level: 'fluent',    note: 'Statistics first, dashboards second. The unglamorous half where the real signal lives.' },
+          { name: 'Gen AI',           level: 'exploring', note: 'Prompting, evals, RAG, cost curves — building intuition for what the current generation of models actually do well.' },
+          { name: 'Agentic Systems',  level: 'exploring', note: 'The question I keep chasing: how do you build software that decides for itself — without going off the rails?' }
+        ]
+      }
+    ];
+
+    const wrap = document.getElementById('stackCanvasWrap');
+    const canvas = document.getElementById('stackCanvas');
+    const reader = document.getElementById('labReader');
+    const lrSystem = document.getElementById('lrSystem');
+    const lrTool = document.getElementById('lrTool');
+    const lrBody = document.getElementById('lrBody');
+    const lrTags = document.getElementById('lrTags');
+    const lrMore = document.getElementById('lrMore');
+    const lrMoreChips = document.getElementById('lrMoreChips');
+
+    // ── Populate mobile system cards (regardless of viewport — CSS hides them on desktop)
+    document.querySelectorAll('.stack-mobile .sys-card').forEach(card => {
+      const sys = systems.find(s => s.key === card.dataset.sys);
+      if (!sys) return;
+      const list = card.querySelector('.sys-list');
+      const intro = card.querySelector('.sys-intro');
+      if (intro) intro.textContent = sys.blurb;
+      const nameEl = card.querySelector('.sys-name');
+      if (nameEl) nameEl.textContent = sys.label;
+      sys.tools.forEach(t => {
+        const li = document.createElement('li');
+        li.dataset.level = t.level;
+        li.innerHTML = `<span class="sl-name">${t.name}</span><span class="sl-level">${t.level}</span>`;
+        list.appendChild(li);
+      });
+    });
+
+    // ── Signature builds → career card highlight
+    document.querySelectorAll('.sig-card').forEach(a => {
+      a.addEventListener('click', e => {
+        const targetId = a.dataset.target;
+        if (!targetId) return;
+        // Let the anchor scroll to #career; after it lands, pulse the exact card.
+        setTimeout(() => {
+          const t = document.getElementById(targetId);
+          if (!t) return;
+          const card = t.querySelector('.mem-card');
+          if (!card) return;
+          card.classList.remove('pulse');
+          void card.offsetWidth; // restart animation
+          card.classList.add('pulse');
+          setTimeout(() => card.classList.remove('pulse'), 1700);
+        }, 650);
+      });
+    });
+
+    // ── Canvas orrery (desktop only)
+    if (!wrap || !canvas || getComputedStyle(wrap).display === 'none') return;
     const ctx = canvas.getContext('2d');
 
-    const nodes = [
-      
-      { name: 'Java',             x: 0.10, y: 0.30, cluster: 0, level: 'daily' },
-      { name: 'Python',           x: 0.16, y: 0.55, cluster: 0, level: 'daily' },
-      { name: 'Spring Boot',      x: 0.22, y: 0.25, cluster: 0, level: 'fluent' },
-      { name: 'Spring Reactive',  x: 0.26, y: 0.48, cluster: 0, level: 'fluent' },
-      { name: 'Hibernate',        x: 0.13, y: 0.42, cluster: 0, level: 'fluent' },
-      { name: 'Microservices',    x: 0.20, y: 0.65, cluster: 0, level: 'fluent' },
-      { name: 'REST APIs',        x: 0.28, y: 0.38, cluster: 0, level: 'daily' },
-      { name: 'React',            x: 0.08, y: 0.62, cluster: 0, level: 'working' },
-      
-      { name: 'Kafka',            x: 0.48, y: 0.28, cluster: 1, level: 'fluent' },
-      { name: 'Flink',            x: 0.56, y: 0.22, cluster: 1, level: 'fluent' },
-      { name: 'SQL',              x: 0.50, y: 0.50, cluster: 1, level: 'daily' },
-      { name: 'Docker',           x: 0.58, y: 0.42, cluster: 1, level: 'daily' },
-      { name: 'Kubernetes',       x: 0.64, y: 0.32, cluster: 1, level: 'working' },
-      { name: 'Pulsar',           x: 0.53, y: 0.60, cluster: 1, level: 'certified' },
-      { name: 'Git',              x: 0.46, y: 0.65, cluster: 1, level: 'daily' },
-      
-      { name: 'ML',               x: 0.76, y: 0.50, cluster: 2, level: 'fluent' },
-      { name: 'NLP',              x: 0.82, y: 0.42, cluster: 2, level: 'fluent' },
-      { name: 'Gen AI',           x: 0.88, y: 0.58, cluster: 2, level: 'exploring' },
-      { name: 'Agentic Systems',  x: 0.80, y: 0.70, cluster: 2, level: 'exploring' },
-      { name: 'Data Science',     x: 0.73, y: 0.64, cluster: 2, level: 'fluent' },
-    ];
+    // Layout: 3 systems side-by-side. Each system has a max orbit radius (maxR)
+    // sized to the canvas; ring fractions below are relative to that.
+    // Proficiency → ring: daily inner (but not so inner it collides with the sun),
+    // fluent middle, working/exploring outer.
+    const levelToRing  = { daily: 0.52, fluent: 0.75, working: 0.96, certified: 0.96, exploring: 1.05 };
+    const levelToSize  = { daily: 5.4,  fluent: 4.6,  working: 3.8,  certified: 4.2,  exploring: 3.8 };
+    const levelToSpeed = { daily: 0.00055, fluent: 0.00042, working: 0.00033, certified: 0.00033, exploring: 0.00028 };
 
-    const edges = [
-      [0,2],[0,4],[0,1],[2,3],[2,5],[5,6],[6,7],[1,7],
-      [8,9],[8,13],[10,9],[11,12],[10,13],[13,14],
-      [15,16],[15,19],[16,17],[17,18],[18,19],
-      [1,15],[1,19],[9,10]
-    ];
-
-    const clusterColors = [
-      { r: 139, g: 131, b: 232 }, // purple
-      { r: 31, g: 173, b: 128 },  // teal
-      { r: 240, g: 168, b: 48 }   // amber
-    ];
+    // For each tool assign an angle so planets don't overlap within a system.
+    // We stagger by level ring so same-radius planets sit at different angles.
+    systems.forEach((sys, si) => {
+      const byLevel = {};
+      sys.tools.forEach(t => { (byLevel[t.level] = byLevel[t.level] || []).push(t); });
+      Object.keys(byLevel).forEach(lvl => {
+        const arr = byLevel[lvl];
+        arr.forEach((t, i) => {
+          // Evenly distribute planets on the same ring; rotate per system so
+          // the three systems don't look identical when viewed together.
+          t._angle = (i / arr.length) * Math.PI * 2 + si * 1.15 + (lvl === 'fluent' ? 0.4 : 0);
+          t._speed = levelToSpeed[t.level] * (1 + (i % 2 ? 0.15 : -0.1));
+          t._size = levelToSize[t.level];
+          t._ring = levelToRing[t.level];
+        });
+      });
+    });
 
     let W, H, dpr;
-    let hoveredNode = -1;
     let mouseCanvasX = -1000, mouseCanvasY = -1000;
-    let frame = 0;
-    let revealed = false;
-    let revealProgress = [];
+    let hovered = null; // { sysIdx, toolIdx }
+    let pinned = null;  // sticky hover after mouseleave
 
     function resize() {
       const rect = wrap.getBoundingClientRect();
       dpr = Math.min(window.devicePixelRatio || 1, 2);
-      W = rect.width;
-      H = rect.height;
-      canvas.width = W * dpr;
-      canvas.height = H * dpr;
-      canvas.style.width = W + 'px';
-      canvas.style.height = H + 'px';
+      W = rect.width; H = rect.height;
+      canvas.width = W * dpr; canvas.height = H * dpr;
+      canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
     resize();
     window.addEventListener('resize', resize, { passive: true });
 
-    
-    nodes.forEach(() => revealProgress.push(0));
+    // Centre of each system's sun. Three horizontal slots with breathing room
+    // at the edges so the outermost planets don't clip the canvas frame.
+    // maxR: pixel radius of the outermost visible ring; sized so 3 systems fit
+    // side-by-side comfortably in W and don't collide with each other.
+    function systemCentre(i) { return { cx: W * (0.18 + i * 0.32), cy: H * 0.54 }; }
+    function maxR() {
+      // Constrain to whichever dimension is tighter so orbits never clip the frame.
+      const slotW = W * 0.30;           // horizontal room per system (avoids collisions with neighbors)
+      const slotH = H * 0.72;           // vertical room (leave headroom for the sun label + legend)
+      return Math.min(slotW, slotH) * 0.5;
+    }
 
-    
-    const driftPhase = nodes.map(() => Math.random() * Math.PI * 2);
-    const driftAmp = nodes.map(() => 4 + Math.random() * 2);
-    const driftPeriod = nodes.map(() => 3000 + Math.random() * 3000);
+    function toolPosition(sysIdx, tool, t) {
+      const { cx, cy } = systemCentre(sysIdx);
+      const r = tool._ring * maxR();
+      const a = tool._angle + t * tool._speed;
+      // Slightly squashed orbits for a subtle top-down perspective.
+      return { x: cx + Math.cos(a) * r, y: cy + Math.sin(a) * r * 0.78, r };
+    }
 
-    
-    const mouseOff = nodes.map(() => ({ x: 0, y: 0 }));
+    // Renders "the rest of this system" as clickable chips so users can browse
+    // once they've hovered once — solves the dead-end after the first interaction.
+    function renderMoreChips(sysIdx, activeToolIdx) {
+      const sys = systems[sysIdx];
+      lrMoreChips.innerHTML = '';
+      sys.tools.forEach((t, i) => {
+        const chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'lr-chip' + (i === activeToolIdx ? ' active' : '');
+        chip.dataset.sys = sysIdx;
+        chip.dataset.tool = i;
+        chip.textContent = t.name;
+        lrMoreChips.appendChild(chip);
+      });
+      lrMore.classList.add('show');
+      lrMore.setAttribute('aria-hidden', 'false');
+    }
+
+    function updateReader(sysIdx, toolIdx) {
+      const sys = systems[sysIdx];
+      const tool = sys.tools[toolIdx];
+      reader.classList.remove('acc-p', 'acc-t', 'acc-a');
+      reader.classList.add('acc-' + sys.key);
+      lrSystem.textContent = sys.label;
+      lrTool.textContent = tool.name;
+      lrBody.textContent = tool.note;
+      lrTags.innerHTML = `<span class="lr-tag" data-level="${tool.level}">${tool.level}</span>`;
+      renderMoreChips(sysIdx, toolIdx);
+    }
+
+    function resetReader() {
+      reader.classList.remove('acc-p', 'acc-t', 'acc-a');
+      lrSystem.textContent = 'Hover a planet';
+      lrTool.textContent = "Or wait — the systems keep spinning.";
+      lrBody.textContent = "Each cluster is one kind of problem I've spent years solving. The closer a planet orbits its sun, the more days I actually reach for it.";
+      lrTags.innerHTML = '';
+      lrMore.classList.remove('show');
+      lrMore.setAttribute('aria-hidden', 'true');
+      lrMoreChips.innerHTML = '';
+    }
+    resetReader();
+
+    // Click-to-pin: chips update reader + pin the corresponding planet so the
+    // orbital canvas visually reflects the selection too.
+    lrMoreChips.addEventListener('click', e => {
+      const chip = e.target.closest('.lr-chip');
+      if (!chip) return;
+      const sysIdx = +chip.dataset.sys;
+      const toolIdx = +chip.dataset.tool;
+      pinned = { sysIdx, toolIdx };
+      hovered = null;
+      updateReader(sysIdx, toolIdx);
+    });
 
     canvas.addEventListener('mousemove', e => {
       const rect = canvas.getBoundingClientRect();
       mouseCanvasX = e.clientX - rect.left;
       mouseCanvasY = e.clientY - rect.top;
-
-      
-      hoveredNode = -1;
-      for (let i = 0; i < nodes.length; i++) {
-        const nx = nodes[i].x * W + mouseOff[i].x;
-        const ny = nodes[i].y * H + mouseOff[i].y;
-        const drift = getDrift(i);
-        const dx = mouseCanvasX - (nx + drift.x);
-        const dy = mouseCanvasY - (ny + drift.y);
-        if (Math.sqrt(dx * dx + dy * dy) < 20) {
-          hoveredNode = i;
-          break;
-        }
-      }
-      canvas.style.cursor = hoveredNode >= 0 ? 'none' : 'default';
     });
-
     canvas.addEventListener('mouseleave', () => {
-      mouseCanvasX = -1000;
-      mouseCanvasY = -1000;
-      hoveredNode = -1;
+      mouseCanvasX = -1000; mouseCanvasY = -1000;
+      // Keep last shown reader — feels less flickery than snapping back.
+    });
+    canvas.addEventListener('click', () => {
+      if (hovered) pinned = { ...hovered };
     });
 
-    function getDrift(i) {
-      const t = performance.now();
-      return {
-        x: Math.sin(t / driftPeriod[i] + driftPhase[i]) * driftAmp[i],
-        y: Math.cos(t / driftPeriod[i] + driftPhase[i] * 1.3) * driftAmp[i] * 0.7
-      };
-    }
-
-    function getNodePos(i) {
-      const drift = getDrift(i);
-      let nx = nodes[i].x * W + drift.x + mouseOff[i].x;
-      let ny = nodes[i].y * H + drift.y + mouseOff[i].y;
-      return { x: nx, y: ny };
-    }
-
-    function draw() {
+    function draw(now) {
       ctx.clearRect(0, 0, W, H);
-      frame++;
 
-      
-      for (let i = 0; i < nodes.length; i++) {
-        if (revealProgress[i] < 1) continue;
-        const pos = getNodePos(i);
-        const dx = mouseCanvasX - pos.x;
-        const dy = mouseCanvasY - pos.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < 100 && dist > 0) {
-          mouseOff[i].x += dx * 0.04;
-          mouseOff[i].y += dy * 0.04;
-          const mag = Math.sqrt(mouseOff[i].x ** 2 + mouseOff[i].y ** 2);
-          if (mag > 20) {
-            mouseOff[i].x *= 20 / mag;
-            mouseOff[i].y *= 20 / mag;
-          }
-        } else {
-          mouseOff[i].x *= 0.94;
-          mouseOff[i].y *= 0.94;
-        }
-      }
+      // Detect hovered planet (nearest under 16px)
+      let bestDist = 22, bestHit = null;
 
-      
-      edges.forEach(([a, b]) => {
-        if (revealProgress[a] < 0.5 || revealProgress[b] < 0.5) return;
-        const pa = getNodePos(a);
-        const pb = getNodePos(b);
-        const c = clusterColors[nodes[a].cluster];
-        const bright = (hoveredNode === a || hoveredNode === b) ? 0.4 : 0.12;
-        ctx.beginPath();
-        ctx.moveTo(pa.x, pa.y);
-        ctx.lineTo(pb.x, pb.y);
-        ctx.strokeStyle = `rgba(${c.r},${c.g},${c.b},${bright})`;
-        ctx.lineWidth = 1;
-        ctx.stroke();
-      });
+      const outerR = maxR();
 
-      
-      for (let i = 0; i < nodes.length; i++) {
-        const alpha = revealProgress[i];
-        if (alpha <= 0) continue;
-        const pos = getNodePos(i);
-        const c = clusterColors[nodes[i].cluster];
-        const isHovered = hoveredNode === i;
-        const r = isHovered ? 6 : 4;
+      // First pass: sun + orbit rings + label. Label sits above the outermost ring.
+      systems.forEach((sys, si) => {
+        const { cx, cy } = systemCentre(si);
+        const [cr, cg, cb] = sys.color;
 
-        ctx.beginPath();
-        ctx.arc(pos.x, pos.y, 12, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(${c.r},${c.g},${c.b},${(isHovered ? 0.25 : 0.08) * alpha})`;
-        ctx.fill();
-
-        if (nodes[i].level === 'exploring') {
+        // Orbit rings — one per unique ring in the system
+        const seen = new Set();
+        sys.tools.forEach(t => {
+          if (seen.has(t._ring)) return;
+          seen.add(t._ring);
+          const r = t._ring * outerR;
           ctx.beginPath();
-          ctx.arc(pos.x, pos.y, r, 0, Math.PI * 2);
-          ctx.strokeStyle = `rgba(${c.r},${c.g},${c.b},${0.7 * alpha})`;
-          ctx.lineWidth = 1.5;
-          ctx.setLineDash([3, 3]);
+          ctx.ellipse(cx, cy, r, r * 0.78, 0, 0, Math.PI * 2);
+          ctx.strokeStyle = `rgba(${cr},${cg},${cb},0.09)`;
+          ctx.lineWidth = 1;
+          ctx.setLineDash(t.level === 'exploring' || t.level === 'working' ? [3, 5] : []);
           ctx.stroke();
           ctx.setLineDash([]);
-        } else {
-          ctx.beginPath();
-          ctx.arc(pos.x, pos.y, r, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(${c.r},${c.g},${c.b},${0.85 * alpha})`;
-          ctx.fill();
-        }
+        });
 
-        ctx.font = (isHovered ? "bold 12px" : "11px") + " 'DM Sans', sans-serif";
+        // Sun — soft radial glow only, no bright disk (label carries the identity)
+        const sunGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, 40);
+        sunGrad.addColorStop(0, `rgba(${cr},${cg},${cb},0.55)`);
+        sunGrad.addColorStop(0.5, `rgba(${cr},${cg},${cb},0.14)`);
+        sunGrad.addColorStop(1, `rgba(${cr},${cg},${cb},0)`);
+        ctx.beginPath();
+        ctx.arc(cx, cy, 40, 0, Math.PI * 2);
+        ctx.fillStyle = sunGrad;
+        ctx.fill();
+
+        // Sun label — above the outermost orbit
+        ctx.font = "700 11px 'Syne', sans-serif";
         ctx.textAlign = 'center';
-        const labelAlpha = isHovered ? alpha : alpha * 0.7;
-        ctx.fillStyle = `rgba(240,237,232,${labelAlpha})`;
-        ctx.fillText(nodes[i].name, pos.x, pos.y - 18);
+        ctx.fillStyle = `rgba(${cr},${cg},${cb},0.9)`;
+        ctx.fillText(sys.label.toUpperCase(), cx, cy - outerR * 0.78 - 14);
+      });
+
+      // Second pass: planets
+      systems.forEach((sys, si) => {
+        const [cr, cg, cb] = sys.color;
+        sys.tools.forEach((tool, ti) => {
+          const p = toolPosition(si, tool, now);
+          const dx = mouseCanvasX - p.x, dy = mouseCanvasY - p.y;
+          const dist = Math.hypot(dx, dy);
+          if (dist < bestDist) { bestDist = dist; bestHit = { sysIdx: si, toolIdx: ti }; }
+
+          const isHover = hovered && hovered.sysIdx === si && hovered.toolIdx === ti;
+          const isPinned = pinned && pinned.sysIdx === si && pinned.toolIdx === ti && !hovered;
+
+          // Glow halo
+          const glowR = isHover ? 16 : isPinned ? 12 : 9;
+          const glowA = isHover ? 0.35 : isPinned ? 0.22 : 0.12;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, glowR, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${cr},${cg},${cb},${glowA})`;
+          ctx.fill();
+
+          // Planet body
+          const r = isHover ? tool._size + 1.6 : tool._size;
+          if (tool.level === 'exploring') {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+            ctx.strokeStyle = `rgba(${cr},${cg},${cb},0.9)`;
+            ctx.lineWidth = 1.4;
+            ctx.setLineDash([2.5, 2.5]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+          } else {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(${cr},${cg},${cb},${tool.level === 'daily' ? 0.98 : 0.78})`;
+            ctx.fill();
+          }
+
+          // Labels only when actually hovered/pinned — always-on labels stack
+          // and become noise, especially on the tight inner "daily" ring.
+          if (isHover || isPinned) {
+            ctx.font = isHover ? "600 12px 'DM Sans', sans-serif" : "500 11px 'DM Sans', sans-serif";
+            ctx.textAlign = 'center';
+            const labelA = isHover ? 1 : 0.88;
+            // Slight text shadow so labels stay legible over other planets/orbits.
+            ctx.fillStyle = 'rgba(7,7,10,0.75)';
+            ctx.fillText(tool.name, p.x + 0.6, p.y - r - 8 + 0.6);
+            ctx.fillStyle = `rgba(240,237,232,${labelA})`;
+            ctx.fillText(tool.name, p.x, p.y - r - 8);
+          }
+        });
+      });
+
+      // Commit hover state
+      if (bestHit) {
+        if (!hovered || hovered.sysIdx !== bestHit.sysIdx || hovered.toolIdx !== bestHit.toolIdx) {
+          hovered = bestHit;
+          updateReader(hovered.sysIdx, hovered.toolIdx);
+          canvas.style.cursor = 'pointer';
+        }
+      } else if (hovered) {
+        // Keep the last hovered card up (don't flicker back to placeholder)
+        pinned = hovered;
+        hovered = null;
+        canvas.style.cursor = 'default';
       }
 
       requestAnimationFrame(draw);
     }
 
-    const constObs = new IntersectionObserver(entries => {
+    // Delay initial draw start until section is scrolled near — cheap.
+    let started = false;
+    const startObs = new IntersectionObserver(entries => {
       entries.forEach(e => {
-        if (e.isIntersecting && !revealed) {
-          revealed = true;
-          nodes.forEach((_, i) => {
-            setTimeout(() => {
-              const start = performance.now();
-              (function fade() {
-                const elapsed = performance.now() - start;
-                revealProgress[i] = Math.min(1, elapsed / 500);
-                if (revealProgress[i] < 1) requestAnimationFrame(fade);
-              })();
-            }, i * 50);
-          });
+        if (e.isIntersecting && !started) {
+          started = true;
+          requestAnimationFrame(draw);
         }
       });
-    }, { threshold: 0.2 });
-    constObs.observe(wrap);
-
-    draw();
-  })(); } catch(e) { console.warn('Constellation error:', e); }
+    }, { threshold: 0.1 });
+    startObs.observe(wrap);
+  })(); } catch(e) { console.warn('Stack orbital error:', e); }
 
   
 

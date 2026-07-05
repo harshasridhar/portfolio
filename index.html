@@ -220,46 +220,76 @@
 <section class="chapter" id="stack">
   <p class="chl fu">Chapter three</p>
   <h2 class="sec-h fu d1">What I reach for.</h2>
-  <p class="si2 fu d2">Tools aren't the story — they're how the story gets told. These are the ones I've learned to <strong>trust under pressure.</strong></p>
+  <p class="si2 fu d2">Tools aren't the story — they're how the story gets told. These are the ones I've learned to <strong>trust under pressure</strong> — grouped not by taxonomy, but by <em>the kind of problem</em> I use them to solve.</p>
 
-  <!-- Desktop: constellation canvas -->
-  <div class="constellation-wrap fu d3" id="constellationWrap">
-    <canvas id="constellation"></canvas>
-  </div>
-  <div class="constellation-legends fu d4">
-    <div class="constellation-legend"><div class="legend-dot lp"></div>Backend Core</div>
-    <div class="constellation-legend"><div class="legend-dot lt"></div>Data &amp; Streaming</div>
-    <div class="constellation-legend"><div class="legend-dot la"></div>AI / ML Layer</div>
+  <!-- ── LAB: orbital systems + reader panel ── -->
+  <div class="stack-lab">
+    <div class="lab-canvas-wrap fu d3" id="stackCanvasWrap">
+      <canvas id="stackCanvas"></canvas>
+      <div class="lab-legend" aria-hidden="true">
+        <span class="lg-row"><span class="lg-dot lg-in"></span>daily</span>
+        <span class="lg-row"><span class="lg-dot lg-mid"></span>fluent</span>
+        <span class="lg-row"><span class="lg-dot lg-out"></span>working / exploring</span>
+      </div>
+    </div>
+
+    <aside class="lab-reader fu d4" id="labReader" aria-live="polite">
+      <div class="lr-eyebrow" id="lrSystem">Hover a planet</div>
+      <div class="lr-tool" id="lrTool">Or wait — the systems keep spinning.</div>
+      <p class="lr-body" id="lrBody">Each cluster is one kind of problem I've spent years solving. The closer a planet orbits its sun, the more days I actually reach for it.</p>
+      <div class="lr-tags" id="lrTags"></div>
+      <div class="lr-more" id="lrMore" aria-hidden="true">
+        <div class="lr-more-label">Rest of this system</div>
+        <div class="lr-more-chips" id="lrMoreChips"></div>
+      </div>
+    </aside>
   </div>
 
-  <!-- Mobile fallback: zone pills -->
-  <div class="zones">
-    <div class="zone zp fu d2"><div class="zl">Backend Core</div><div class="pills" data-zone>
-      <div class="pill"><span class="pn">Java</span><span class="pt">daily</span></div>
-      <div class="pill"><span class="pn">Python</span><span class="pt">daily</span></div>
-      <div class="pill"><span class="pn">Spring Boot</span><span class="pt">fluent</span></div>
-      <div class="pill"><span class="pn">Spring Reactive</span><span class="pt">fluent</span></div>
-      <div class="pill"><span class="pn">Hibernate</span><span class="pt">fluent</span></div>
-      <div class="pill"><span class="pn">Microservices</span><span class="pt">fluent</span></div>
-      <div class="pill"><span class="pn">REST APIs</span><span class="pt">daily</span></div>
-      <div class="pill"><span class="pn">React</span><span class="pt">working</span></div>
-    </div></div>
-    <div class="zone zt fu d3"><div class="zl">Data &amp; Streaming</div><div class="pills" data-zone>
-      <div class="pill"><span class="pn">Apache Kafka</span><span class="pt">fluent</span></div>
-      <div class="pill"><span class="pn">Apache Flink</span><span class="pt">fluent</span></div>
-      <div class="pill"><span class="pn">SQL</span><span class="pt">daily</span></div>
-      <div class="pill"><span class="pn">Docker</span><span class="pt">daily</span></div>
-      <div class="pill"><span class="pn">Kubernetes</span><span class="pt">working</span></div>
-      <div class="pill"><span class="pn">Apache Pulsar</span><span class="pt">certified</span></div>
-      <div class="pill"><span class="pn">Git</span><span class="pt">daily</span></div>
-    </div></div>
-    <div class="zone za fu d4"><div class="zl">AI / ML Layer</div><div class="pills" data-zone>
-      <div class="pill"><span class="pn">Machine Learning</span><span class="pt">fluent</span></div>
-      <div class="pill"><span class="pn">NLP</span><span class="pt">fluent</span></div>
-      <div class="pill"><span class="pn">Gen AI</span><span class="pt">exploring</span></div>
-      <div class="pill"><span class="pn">Agentic Systems</span><span class="pt">exploring</span></div>
-      <div class="pill"><span class="pn">Data Science</span><span class="pt">fluent</span></div>
-    </div></div>
+  <!-- ── Mobile fallback: three system cards ── -->
+  <div class="stack-mobile">
+    <div class="sys-card sys-p fu d2" data-sys="p">
+      <div class="sys-head"><span class="sys-sun"></span><span class="sys-name">Services I ship</span></div>
+      <p class="sys-intro">Backend I build against — mostly JVM, always tested under load.</p>
+      <ul class="sys-list"></ul>
+    </div>
+    <div class="sys-card sys-t fu d3" data-sys="t">
+      <div class="sys-head"><span class="sys-sun"></span><span class="sys-name">Data I move</span></div>
+      <p class="sys-intro">Pipelines, streams, and the plumbing that keeps them honest.</p>
+      <ul class="sys-list"></ul>
+    </div>
+    <div class="sys-card sys-a fu d4" data-sys="a">
+      <div class="sys-head"><span class="sys-sun"></span><span class="sys-name">Systems I teach to think</span></div>
+      <p class="sys-intro">The frontier I keep circling back to — from ML foundations to agentic frontiers.</p>
+      <ul class="sys-list"></ul>
+    </div>
+  </div>
+
+  <!-- ── Signature builds strip (cross-links to Career) ── -->
+  <div class="sig-builds fu d5">
+    <div class="sig-head">
+      <span class="sig-eyebrow">— Where the toolset earned its keep</span>
+      <span class="sig-cta">jump to career ↓</span>
+    </div>
+    <div class="sig-grid">
+      <a class="sig-card" href="#career" data-target="tli1">
+        <div class="sig-role">Amagi · '22</div>
+        <div class="sig-title">Real-time broadcast ingest</div>
+        <p class="sig-body">Stateful stream processing over live TV metadata. This is where data-in-motion clicked.</p>
+        <div class="sig-chips"><span>Kafka</span><span>Flink</span><span>Spring Boot</span></div>
+      </a>
+      <a class="sig-card" href="#career" data-target="tli0">
+        <div class="sig-role">GigSky · '19–'21</div>
+        <div class="sig-title">Legacy migration + APIs</div>
+        <p class="sig-body">Learned the fundamentals of throughput, threading, and paying down debt without stopping the ship.</p>
+        <div class="sig-chips"><span>Java</span><span>Multithreading</span><span>SQL</span></div>
+      </a>
+      <a class="sig-card" href="#career" data-target="tli3">
+        <div class="sig-role">Roku · '24 →</div>
+        <div class="sig-title">Reactive e-commerce platform</div>
+        <p class="sig-body">Non-blocking end to end. Now asking which parts can start deciding for themselves.</p>
+        <div class="sig-chips"><span>Spring Reactive</span><span>React</span><span>Agentic AI</span></div>
+      </a>
+    </div>
   </div>
 </section>
 
